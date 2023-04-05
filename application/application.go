@@ -1112,7 +1112,8 @@ func (a *Application) serveLiveStreaming(w http.ResponseWriter, r *http.Request,
 	cmd := exec.Command(
 		"ffmpeg",
 		"-hwaccel", "vaapi", // enable hardware acceleration
-		"-vaapi_device", "/dev/dri/renderD128",
+		"-hwaccel_output_format", "vaapi",
+		"-vaapi_device", "/dev/dri/card0",
 		"-i", filename,
 		"-vcodec", "h264_vaapi",
 		"-acodec", "aac",
