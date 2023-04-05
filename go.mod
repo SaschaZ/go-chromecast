@@ -1,4 +1,4 @@
-module github.com/vishen/go-chromecast
+module github.com/SaschaZ/go-chromecast
 
 go 1.19
 
