@@ -3,8 +3,8 @@
 package mocks
 
 import (
-	cast "github.com/vishen/go-chromecast/cast"
-	api "github.com/vishen/go-chromecast/cast/proto"
+	cast "github.com/SaschaZ/go-chromecast/cast"
+	api "github.com/SaschaZ/go-chromecast/cast/proto"
 
 	mock "github.com/stretchr/testify/mock"
 )

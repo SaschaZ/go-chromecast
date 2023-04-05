@@ -20,7 +20,7 @@ import (
 	"time"
 
 	"github.com/spf13/cobra"
-	castdns "github.com/vishen/go-chromecast/dns"
+	castdns "github.com/SaschaZ/go-chromecast/dns"
 )
 
 // lsCmd represents the ls command

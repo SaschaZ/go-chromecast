@@ -6,10 +6,10 @@ import (
 
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
-	"github.com/vishen/go-chromecast/application"
-	"github.com/vishen/go-chromecast/cast"
-	mockCast "github.com/vishen/go-chromecast/cast/mocks"
-	pb "github.com/vishen/go-chromecast/cast/proto"
+	"github.com/SaschaZ/go-chromecast/application"
+	"github.com/SaschaZ/go-chromecast/cast"
+	mockCast "github.com/SaschaZ/go-chromecast/cast/mocks"
+	pb "github.com/SaschaZ/go-chromecast/cast/proto"
 )
 
 var mockAddr = "foo.bar"

@@ -21,9 +21,9 @@ import (
 	"github.com/buger/jsonparser"
 	"github.com/pkg/errors"
 
-	"github.com/vishen/go-chromecast/cast"
-	pb "github.com/vishen/go-chromecast/cast/proto"
-	"github.com/vishen/go-chromecast/storage"
+	"github.com/SaschaZ/go-chromecast/cast"
+	pb "github.com/SaschaZ/go-chromecast/cast/proto"
+	"github.com/SaschaZ/go-chromecast/storage"
 )
 
 var (
@@ -362,7 +362,7 @@ func (a *Application) Update() error {
 		a.log("more than 1 connected application on the chromecast: (%d)%#v", len(recvStatus.Status.Applications), recvStatus.Status.Applications)
 	}
 
-	// TODO(vishen): Why could there be more than one application, how to handle this?
+	// TODO(SaschaZ): Why could there be more than one application, how to handle this?
 	// For now just take the last one.
 	for _, app := range recvStatus.Status.Applications {
 		a.application = &app
@@ -470,7 +470,7 @@ func (a *Application) Next() error {
 		return ErrNoMediaNext
 	}
 
-	// TODO(vishen): Get the number of queue items, if none, possibly just skip to the end?
+	// TODO(SaschaZ): Get the number of queue items, if none, possibly just skip to the end?
 	return a.sendMediaRecv(&cast.QueueUpdate{
 		PayloadHeader:  cast.QueueUpdateHeader,
 		MediaSessionId: a.media.MediaSessionId,
@@ -483,7 +483,7 @@ func (a *Application) Previous() error {
 		return ErrNoMediaPrevious
 	}
 
-	// TODO(vishen): Get the number of queue items, if none, possibly just jump to beginning?
+	// TODO(SaschaZ): Get the number of queue items, if none, possibly just jump to beginning?
 	return a.sendMediaRecv(&cast.QueueUpdate{
 		PayloadHeader:  cast.QueueUpdateHeader,
 		MediaSessionId: a.media.MediaSessionId,
@@ -498,7 +498,7 @@ func (a *Application) Skip() error {
 	}
 
 	// Get the latest media status
-	// TODO(vishen): can we unroll this, so it doesn't update the current state?
+	// TODO(SaschaZ): can we unroll this, so it doesn't update the current state?
 	// but just returns it?
 	// that might also make a.media == nil checks pointless?
 	a.updateMediaStatus()
@@ -544,12 +544,12 @@ func (a *Application) SeekFromStart(value int) error {
 	}
 
 	// Get the latest media status
-	// TODO(vishen): can we unroll this, so it doesn't update the current state?
+	// TODO(SaschaZ): can we unroll this, so it doesn't update the current state?
 	// but just returns it?
 	// that might also make a.media == nil checks pointless?
 	a.updateMediaStatus()
 
-	// TODO(vishen): maybe there is another ResumeState that lets us
+	// TODO(SaschaZ): maybe there is another ResumeState that lets us
 	// seek from the end? Although not sure how this works for live media?
 
 	return a.sendMediaRecv(&cast.MediaHeader{
@@ -1030,7 +1030,7 @@ func (a *Application) getLocalIP() (string, error) {
 	}
 	for _, addr := range addrs {
 		if ipnet, ok := addr.(*net.IPNet); ok && !ipnet.IP.IsLoopback() {
-			// TODO(vishen): Fallback to ipv6 if ipv4 fails? Or maybe do the other
+			// TODO(SaschaZ): Fallback to ipv6 if ipv4 fails? Or maybe do the other
 			// way around? I am unsure if chromecast supports ipv6???
 			if ipnet.IP.To4() != nil {
 				a.localIP = ipnet.IP.String()
@@ -1092,7 +1092,7 @@ func (a *Application) startStreamingServer() error {
 		a.log("method=%s, headers=%v, reponse_headers=%v", r.Method, r.Header, w.Header())
 		pi := a.playedItems[filename]
 
-		// TODO(vishen): make this a pointer?
+		// TODO(SaschaZ): make this a pointer?
 		pi.Finished = time.Now().Unix()
 		a.playedItems[filename] = pi
 		a.writePlayedItems()
@@ -1147,7 +1147,7 @@ func (a *Application) log(message string, args ...interface{}) {
 
 func (a *Application) send(payload cast.Payload, sourceID, destinationID, namespace string) (int, error) {
 	// NOTE: Not concurrent safe, but currently only synchronous flow is possible
-	// TODO(vishen): just make concurrent safe regardless of current flow
+	// TODO(SaschaZ): just make concurrent safe regardless of current flow
 	requestID += 1
 	payload.SetRequestId(requestID)
 	return requestID, a.conn.Send(requestID, payload, sourceID, destinationID, namespace)
@@ -1163,7 +1163,7 @@ func (a *Application) sendAndWait(payload cast.Payload, sourceID, destinationID,
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
 
-	// TODO(vishen): not concurrent safe. Not a problem at the moment
+	// TODO(SaschaZ): not concurrent safe. Not a problem at the moment
 	// because only synchronous flow currently allowed.
 	resultChan := make(chan *pb.CastMessage, 1)
 	a.resultChanMap[requestID] = resultChan
@@ -1179,7 +1179,7 @@ func (a *Application) sendAndWait(payload cast.Payload, sourceID, destinationID,
 	}
 }
 
-// TODO(vishen): needing send(AndWait)* method seems a bit clunky, is there a better approach?
+// TODO(SaschaZ): needing send(AndWait)* method seems a bit clunky, is there a better approach?
 // Maybe having a struct that has send and sendAndWait, similar to before.
 func (a *Application) sendDefaultConn(payload cast.Payload) error {
 	_, err := a.send(payload, defaultSender, defaultRecv, namespaceConn)
@@ -1282,7 +1282,7 @@ func (a *Application) startTranscodingServer(command string, args ...string) err
 		a.log("method=%s, headers=%v, reponse_headers=%v", r.Method, r.Header, w.Header())
 		pi := a.playedItems[filename]
 
-		// TODO(vishen): make this a pointer?
+		// TODO(SaschaZ): make this a pointer?
 		pi.Finished = time.Now().Unix()
 		a.playedItems[filename] = pi
 		a.writePlayedItems()

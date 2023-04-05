@@ -4,7 +4,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/vishen/go-chromecast/application"
+	"github.com/SaschaZ/go-chromecast/application"
 
 	"github.com/jroimartin/gocui"
 

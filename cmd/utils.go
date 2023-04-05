@@ -15,9 +15,9 @@ import (
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-	"github.com/vishen/go-chromecast/application"
-	castdns "github.com/vishen/go-chromecast/dns"
-	"github.com/vishen/go-chromecast/storage"
+	"github.com/SaschaZ/go-chromecast/application"
+	castdns "github.com/SaschaZ/go-chromecast/dns"
+	"github.com/SaschaZ/go-chromecast/storage"
 )
 
 var (
