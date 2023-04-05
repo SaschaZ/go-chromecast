@@ -1111,9 +1111,6 @@ func (a *Application) startStreamingServer() error {
 func (a *Application) serveLiveStreaming(w http.ResponseWriter, r *http.Request, filename string) {
 	cmd := exec.Command(
 		"ffmpeg",
-		"-hwaccel", "vaapi", // enable hardware acceleration
-		"-vaapi_device", "/dev/dri/renderD128",
-		"-c:v", "vp8_vaapi",
 		"-i", filename,
 		"-vcodec", "h264",
 		"-acodec", "aac",
