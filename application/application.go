@@ -1119,6 +1119,7 @@ func (a *Application) serveLiveStreaming(w http.ResponseWriter, r *http.Request,
 		"-acodec", "aac",
 		"-ac", "2", // chromecasts don't support more than two audio channels
 		"-f", "mp4",
+		"-movflags", "frag_keyframe+faststart",
 		"pipe:1",
 	)
 
