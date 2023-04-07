@@ -1114,7 +1114,7 @@ func (a *Application) serveLiveStreaming(w http.ResponseWriter, r *http.Request,
 		//"-re", // encode at 1x playback speed, to not burn the CPU
 		"-hwaccel", "vaapi",
 		"-hwaccel_output_format", "vaapi",
-		"-vaapi_device", "/dev/dri/card0",
+		"-vaapi_device", "/dev/dri/card1",
 		"-i", filename,
 		"-vcodec", "h264_vaapi",
 		"-acodec", "aac",
