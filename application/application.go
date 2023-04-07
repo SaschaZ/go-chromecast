@@ -1123,7 +1123,7 @@ func (a *Application) serveLiveStreaming(w http.ResponseWriter, r *http.Request,
 		"-map", "0:m:language:ger", // selec t german audio track
 		"-f", "mp4",
 		"-movflags", "frag_keyframe+faststart",
-		"-strict", "-experimental",
+		// "-strict", "-experimental",
 		"pipe:1",
 	)
 
