@@ -1119,11 +1119,11 @@ func (a *Application) serveLiveStreaming(w http.ResponseWriter, r *http.Request,
 		"-vcodec", "h264_vaapi",
 		"-acodec", "aac",
 		"-ac", "1",
-		// "-vf", "scale=-1:1080",
-		"-map", "0:m:language:ger",
+		// "-vf", "scale=-1:1080", // scale to HD
+		"-map", "0:m:language:ger", // selec t german audio track
 		"-f", "mp4",
 		"-movflags", "frag_keyframe+faststart",
-		// "-strict", "-experimental",
+		"-strict", "-experimental",
 		"pipe:1",
 	)
 
