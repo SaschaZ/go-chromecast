@@ -1111,9 +1111,12 @@ func (a *Application) startStreamingServer() error {
 func (a *Application) serveLiveStreaming(w http.ResponseWriter, r *http.Request, filename string) {
 	cmd := exec.Command(
 		"ffmpeg",
-		"-re", // encode at 1x playback speed, to not burn the CPU
+		// "-re", // encode at 1x playback speed, to not burn the CPU
+		"-hwaccel", "vaapi"
+    	"-hwaccel_output_format", "vaapi"
+    	"-vaapi_device", "/dev/dri/renderD128"
 		"-i", filename,
-		"-vcodec", "h264",
+		"-vcodec", "h264_vaapi",
 		"-acodec", "aac",
 		"-ac", "2", // chromecasts don't support more than two audio channels
 		"-f", "mp4",
