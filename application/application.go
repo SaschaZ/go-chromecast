@@ -1114,15 +1114,15 @@ func (a *Application) serveLiveStreaming(w http.ResponseWriter, r *http.Request,
 		//"-re", // encode at 1x playback speed, to not burn the CPU
 		"-hwaccel", "vaapi",
 		"-hwaccel_output_format", "vaapi",
-		"-vaapi_device", "/dev/rmi/card0",
+		"-vaapi_device", "/dev/dri/renderD128",
 		"-i", filename,
 		"-vcodec", "h264_vaapi",
 		"-acodec", "aac",
 		"-ac", "1",
 		// "-vf", "scale=-1:1080", // scale to HD
-		"-map", "0:m:language:ger", // selec t german audio track
+		"-map", "0:m:language:ger", // select german audio track
 		"-f", "mp4",
-		"-movflags", "frag_keyframe+faststart",
+		"-movflags", "keyframe+faststart",
 		"-strict", "-experimental",
 		"pipe:1",
 	)
