@@ -1108,7 +1108,7 @@ func (a *Application) startStreamingServer() error {
 	return nil
 }
 
-func (a *Application) serveLiveStreaming(w http.ResponseWriter, r *http.Request, filename string, startTime int) {
+func (a *Application) serveLiveStreaming(w http.ResponseWriter, r *http.Request, filename string) {
 	cmd := exec.Command(
 		"ffmpeg",
 		"-i", filename,
