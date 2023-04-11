@@ -732,7 +732,7 @@ func (a *Application) Load(filenameOrUrl string, startTime int, contentType stri
 			contentType: contentType,
 		}
 	} else {
-		mediaItems, err := a.loadAndServeFiles([]string{filenameOrUrl}, contentType, transcode)
+		mediaItems, err := a.loadAndServeFiles([]string{filenameOrUrl}, contentType, startTime, transcode)
 		if err != nil {
 			return errors.Wrap(err, "unable to load and serve files")
 		}
@@ -945,7 +945,7 @@ type mediaItem struct {
 	transcode   bool
 }
 
-func (a *Application) loadAndServeFiles(filenames []string, contentType string, transcode bool) ([]mediaItem, error) {
+func (a *Application) loadAndServeFiles(filenames []string, contentType string, startTime int, transcode bool) ([]mediaItem, error) {
 	mediaItems := make([]mediaItem, len(filenames))
 	for i, filename := range filenames {
 		transcodeFile := transcode
@@ -1005,7 +1005,7 @@ func (a *Application) loadAndServeFiles(filenames []string, contentType string, 
 	// We can only set the content url after the server has started, otherwise we have
 	// no way to know the port used.
 	for i, m := range mediaItems {
-		mediaItems[i].contentURL = fmt.Sprintf("http://%s:%d?media_file=%s&live_streaming=%t", localIP, a.serverPort, m.filename, m.transcode)
+		mediaItems[i].contentURL = fmt.Sprintf("http://%s:%d?media_file=%s&live_streaming=%t&start_time=$d", localIP, a.serverPort, m.filename, m.transcode, startTime)
 	}
 
 	return mediaItems, nil
@@ -1078,13 +1078,15 @@ func (a *Application) startStreamingServer() error {
 		if ls := r.URL.Query().Get("live_streaming"); ls == "true" {
 			liveStreaming = true
 		}
+		
+		startTime = r.URL.Query().Get("start_time")
 
 		a.log("canServe=%t, liveStreaming=%t, filename=%s", canServe, liveStreaming, filename)
 		if canServe {
 			if !liveStreaming {
 				http.ServeFile(w, r, filename)
 			} else {
-				a.serveLiveStreaming(w, r, filename)
+				a.serveLiveStreaming(w, r, filename, startTime)
 			}
 		} else {
 			http.Error(w, "Invalid file", 400)
@@ -1108,21 +1110,26 @@ func (a *Application) startStreamingServer() error {
 	return nil
 }
 
-func (a *Application) serveLiveStreaming(w http.ResponseWriter, r *http.Request, filename string) {
+func (a *Application) serveLiveStreaming(w http.ResponseWriter, r *http.Request, filename string, startTime int) {
 	cmd := exec.Command(
 		"ffmpeg",
+		"-i", filename,
+		// hw acceleration with vaapi
 		"-hwaccel", "vaapi",
     	"-hwaccel_output_format", "vaapi",
     	"-vaapi_device", "/dev/dri/renderD128",
-		"-i", filename,
 		"-vcodec", "h264_vaapi",
 		"-acodec", "aac",
-		"-ac", "2", // chromecasts don't support more than two audio channels
+		"-ac", "1", // only use one audio stream
 		"-f", "mp4",
+		// lossless quality
 		"-preset", "veryslow",
 		"-qp", "0",
+		// select german audio stream
 		"-map", "0:v",
-    	"-map", "0:a:m:language:ger", // select german audio stream
+    	"-map", "0:a:m:language:ger",
+		// misc
+		"-ss", startTime,
 		"-movflags", "frag_keyframe+faststart",
 		"-strict", "-experimental",
 		"pipe:1",
