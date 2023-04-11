@@ -732,7 +732,7 @@ func (a *Application) Load(filenameOrUrl string, startTime int, contentType stri
 			contentType: contentType,
 		}
 	} else {
-		mediaItems, err := a.loadAndServeFiles([]string{filenameOrUrl}, contentType, startTime, transcode)
+		mediaItems, err := a.loadAndServeFiles([]string{filenameOrUrl}, contentType, transcode)
 		if err != nil {
 			return errors.Wrap(err, "unable to load and serve files")
 		}
@@ -945,7 +945,7 @@ type mediaItem struct {
 	transcode   bool
 }
 
-func (a *Application) loadAndServeFiles(filenames []string, contentType string, startTime int, transcode bool) ([]mediaItem, error) {
+func (a *Application) loadAndServeFiles(filenames []string, contentType string, transcode bool) ([]mediaItem, error) {
 	mediaItems := make([]mediaItem, len(filenames))
 	for i, filename := range filenames {
 		transcodeFile := transcode
@@ -1005,7 +1005,7 @@ func (a *Application) loadAndServeFiles(filenames []string, contentType string, 
 	// We can only set the content url after the server has started, otherwise we have
 	// no way to know the port used.
 	for i, m := range mediaItems {
-		mediaItems[i].contentURL = fmt.Sprintf("http://%s:%d?media_file=%s&live_streaming=%t&start_time=$d", localIP, a.serverPort, m.filename, m.transcode, startTime)
+		mediaItems[i].contentURL = fmt.Sprintf("http://%s:%d?media_file=%s&live_streaming=%t", localIP, a.serverPort, m.filename, m.transcode)
 	}
 
 	return mediaItems, nil
@@ -1078,15 +1078,13 @@ func (a *Application) startStreamingServer() error {
 		if ls := r.URL.Query().Get("live_streaming"); ls == "true" {
 			liveStreaming = true
 		}
-		
-		startTime = r.URL.Query().Get("start_time")
 
 		a.log("canServe=%t, liveStreaming=%t, filename=%s", canServe, liveStreaming, filename)
 		if canServe {
 			if !liveStreaming {
 				http.ServeFile(w, r, filename)
 			} else {
-				a.serveLiveStreaming(w, r, filename, startTime)
+				a.serveLiveStreaming(w, r, filename)
 			}
 		} else {
 			http.Error(w, "Invalid file", 400)
@@ -1129,7 +1127,6 @@ func (a *Application) serveLiveStreaming(w http.ResponseWriter, r *http.Request,
 		"-map", "0:v",
     	"-map", "0:a:m:language:ger",
 		// misc
-		"-ss", startTime,
 		"-movflags", "frag_keyframe+faststart",
 		"-strict", "-experimental",
 		"pipe:1",
