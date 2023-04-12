@@ -1113,19 +1113,21 @@ func (a *Application) serveLiveStreaming(w http.ResponseWriter, r *http.Request,
 		"ffmpeg",
 		"-i", filename,
 		// hw acceleration with vaapi
-		"-hwaccel", "vaapi",
-    	"-hwaccel_output_format", "vaapi",
+		//"-hwaccel", "vaapi",
+    	//"-hwaccel_output_format", "vaapi",
     	"-vaapi_device", "/dev/dri/renderD128",
 		"-vcodec", "h264_vaapi",
 		"-acodec", "aac",
-		"-ac", "1", // only use one audio stream
-		"-f", "mp4",
+		"-ac", "2", // use max two audio streams
+		"-f", "mkv",
 		// lossless quality
 		"-preset", "veryslow",
 		"-qp", "0",
 		// select german audio stream
 		"-map", "0:v",
-    	"-map", "0:a:m:language:ger",
+		"-map", "0:a:m:language:ger?",
+		"-map", "0:a:0?",
+		"-disposition:a:0", "default",
 		// misc
 		"-movflags", "frag_keyframe+faststart",
 		"-strict", "-experimental",
